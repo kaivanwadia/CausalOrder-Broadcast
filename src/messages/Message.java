@@ -1,15 +1,13 @@
 package messages;
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Date;
 
 
-public class Message implements Serializable{
+public class Message {
 	public int messageNo;
 	public int srcProcess;
 	public int destProcess;
 	public String messageText;
-	public int[] vectorClock;
+	public int[] timeStamp;
 	/**
 	 * Default constructor for Message. Sets everything to -1
 	 */
@@ -22,14 +20,14 @@ public class Message implements Serializable{
 	 * @param srcPr - The source process number of the message
 	 * @param destPr - The destination process number of the message
 	 * @param msgTxt - The text of the message
-	 * @param vectorClk - The vector clock associated with the message
+	 * @param timeStmp - The vector clock associated with the message
 	 */
-	public Message(int msgNo, int srcPr, int destPr, int[] vectorClk, String msgTxt) {
+	public Message(int msgNo, int srcPr, int destPr, int[] timeStmp, String msgTxt) {
 		this.messageNo = msgNo;
 		this.srcProcess = srcPr;
 		this.destProcess = destPr;
 		this.messageText = msgTxt;
-		this.vectorClock = vectorClk;
+		this.timeStamp = timeStmp;
 	}
 	/**
 	 * A constructor to return a new object of type message. The msg text is set to empty.
@@ -47,7 +45,7 @@ public class Message implements Serializable{
 	public void printMessage() {
 		System.out.println("====Message====");
 		System.out.println("No: " + this.messageNo + "\t" + "Src: " + this.srcProcess + "\t to Dest: " + this.destProcess);
-		System.out.println("Vector Clock: " + Arrays.toString(this.vectorClock) + "\t text: "+this.messageText);
+		System.out.println("Vector Clock: " + Arrays.toString(this.timeStamp) + "\t text: "+this.messageText);
 		System.out.println("===============");
 	}
 	/**
@@ -56,7 +54,7 @@ public class Message implements Serializable{
 	 */
 	public String details() {
 		String msgDetails = "====Message====\n"+"No: " + this.messageNo + "\t" + "Src: " + this.srcProcess + "\t to Dest: " + this.destProcess+"\n";
-		msgDetails = msgDetails+"Vector Clock: " + Arrays.toString(this.vectorClock)+ "\t text: "+this.messageText+"\n===============\n";
+		msgDetails = msgDetails+"Vector Clock: " + Arrays.toString(this.timeStamp)+ "\t text: "+this.messageText+"\n===============\n";
 		return msgDetails;
 	}
 	

@@ -1,5 +1,4 @@
 package messages;
-import java.util.Date;
 
 
 public class RouterRequest {

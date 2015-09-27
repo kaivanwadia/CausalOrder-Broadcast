@@ -6,26 +6,17 @@ Time: 1
 
 p0 BRC p_0:1
 p0 REC p_0:1
-====Message====
-No: 1	Src: 0	 to Dest: 0
-Vector Clock: [0, 0, 0, 0, 0]	 text: 1 from 0 to 0
-===============
+p0 DLR p_0:1
 ----------------
 Time: 2
 
 p0 REC p_1:1
-====Message====
-No: 1	Src: 1	 to Dest: 0
-Vector Clock: [0, 0, 0, 0, 0]	 text: 1 from 1 to 0
-===============
+p0 DLR p_1:1
 ----------------
 Time: 3
 
 p0 REC p_1:2
-====Message====
-No: 2	Src: 1	 to Dest: 0
-Vector Clock: [0, 0, 0, 0, 0]	 text: 2 from 1 to 0
-===============
+p0 DLR p_1:2
 ----------------
 Time: 4
 

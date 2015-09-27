@@ -1,6 +1,6 @@
 package messages;
 
-public enum BroadcastType {
+public enum CastingType {
 	BROADCAST,
 	UNICAST,
 	NULL

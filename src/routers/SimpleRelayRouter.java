@@ -3,19 +3,15 @@ package routers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
-import com.google.gson.Gson;
-
-import messages.Message;
 import messages.RouterRequest;
+
+import com.google.gson.Gson;
 
 public class SimpleRelayRouter implements Runnable {
 	// TODO : Change this to a HashMap?? Where the key is the processNo/ID 
@@ -97,22 +93,15 @@ public class SimpleRelayRouter implements Runnable {
 	 * ArrayList.
 	 */
 	public void ExecuteRoutingRequests() {
-//		int size = this.routingRequests.size();
-		boolean temp = false;
 		for (Iterator<RouterRequest> iterator = this.routingRequests.iterator(); iterator.hasNext(); ) {
 			RouterRequest request = iterator.next();
 			if (System.currentTimeMillis() - request.startTime >= (request.delayTime * 1000)) {
-				temp = true;
 				System.out.println("Executing Request : \n" + request.toString());
 				this.outStreams[request.destProcess].println(this.gson.toJson(request.message));
 				this.outStreams[request.destProcess].flush();
 				iterator.remove();
 			}
 		}
-//		if (temp) {
-//			System.out.println("Routing Requests Before: " + size);
-//			System.out.println("Routing Requests After: " + this.routingRequests.size());
-//		}
 	}
 	/**
 	 * Method to check if all the processes have terminated and accordingly 

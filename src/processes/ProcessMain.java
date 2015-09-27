@@ -1,19 +1,15 @@
 package processes;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
+import messages.CastingType;
 import messages.MessageInstruction;
-import messages.BroadcastType;
 
 public class ProcessMain {
-	// TODO : Have a maximum time value in the system for when it has to shut down
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
 			System.err.println("Incorrect number of arguments provided in ProcessMain");
@@ -22,12 +18,19 @@ public class ProcessMain {
 		BufferedReader br = new BufferedReader(new FileReader(args[0]));
 		int noOfProcess = Integer.parseInt(br.readLine().split(" ")[0]);
 		int routerPort = Integer.parseInt(br.readLine().split(" ")[0]);
+		String typeStr = br.readLine().split(" ")[0];
+		CastingType castingType = typeStr.equals("bc")?CastingType.BROADCAST:CastingType.UNICAST;
 		if (noOfProcess == 0) {
 			System.err.println("Minimum of 1 processes required");
 			System.exit(1);
 		}
 		int[][] delayMatrix = getDelayMatrix(br, noOfProcess);
-		HashMap<Integer, ArrayList<MessageInstruction>> messageMap = getMessages(br, noOfProcess);
+		HashMap<Integer, ArrayList<MessageInstruction>> messageMap;
+		if (castingType == CastingType.BROADCAST) {
+			messageMap = getMessagesForBroadcastMode(br, noOfProcess);
+		} else {
+			messageMap = getMessagesForUnicastMode(br, noOfProcess);
+		}
 		if (!br.ready()) {
 			System.err.println("Maximum running time of system not given for simulation");
 			System.exit(1);
@@ -35,21 +38,24 @@ public class ProcessMain {
 		int maxRunningTime = Integer.parseInt(br.readLine().split(" ")[0]);
 		br.close();
 		// TODO : Remove this line
-//		noOfProcess = 2;
 		for (int i = 0; i < noOfProcess; i++) {
-			ProcessNode p = new ProcessNode(i, noOfProcess, routerPort, delayMatrix[i], messageMap.get(i), maxRunningTime);
-			p.start();
+			if (castingType == CastingType.BROADCAST) {
+				ProcessNode p = new BroadcastProcess(i, noOfProcess, routerPort, delayMatrix[i], messageMap.get(i), maxRunningTime);
+				p.start();
+			} else if (castingType == CastingType.UNICAST) {
+				
+			}
 		}
 	}
 
 	/**
-	 * Method to get the messages sent in the system
+	 * Method to get the messages sent in the system in unicast mode
 	 * @param br - The buffered reader to read from
 	 * @param noOfProcess - The number of processes in the system
 	 * @return - An HashMap of ProcessID to ArrayList of MessageInstruction containing all the messages to be sent by that instruction 
 	 * @throws IOException
 	 */
-	private static HashMap<Integer, ArrayList<MessageInstruction>> getMessages(BufferedReader br, int noOfProcess) throws IOException {
+	private static HashMap<Integer, ArrayList<MessageInstruction>> getMessagesForUnicastMode(BufferedReader br, int noOfProcess) throws IOException {
 		HashMap<Integer, ArrayList<MessageInstruction>> messageMap = new HashMap<Integer, ArrayList<MessageInstruction>>();
 		for (int i = 0; i < noOfProcess; i++) {
 			messageMap.put(i, new ArrayList<MessageInstruction>());
@@ -61,31 +67,29 @@ public class ProcessMain {
 		}
 		String line = br.readLine();
 		while (!line.equals("EndMessages")) {
-			System.out.println(line);
 			String[] messageValues = line.split(" ");
 			if (messageValues.length < 3) {
 				System.err.println("Wrong format of message");
 				System.exit(1);
 			}
 			int srcProcess = Integer.parseInt(messageValues[0]);
-			String sType = messageValues[1];
-			BroadcastType type = sType.equals("bc")?BroadcastType.BROADCAST:BroadcastType.UNICAST;
-			String[] sendTimes = messageValues[2].split(",");
-			if (type == BroadcastType.BROADCAST) {
+			try {
+				int destProcess = Integer.parseInt(messageValues[1]);
+				String[] sendTimes = messageValues[2].split(",");
 				for (int i = 0; i < sendTimes.length; i++) {
 					int sendTime = Integer.parseInt(sendTimes[i]);
-					MessageInstruction msgInst = new MessageInstruction(srcProcess, -1, sendTime, type);
+					MessageInstruction msgInst = new MessageInstruction(srcProcess, destProcess, sendTime);
 					messageMap.get(srcProcess).add(msgInst);
 				}
-			} else if (type == BroadcastType.UNICAST) {
-				System.err.println("Should only have 'bc' type messages");
+			} catch (NumberFormatException e) {
+				System.err.println("Should only have unicast type messages and not a non-numeric value");
 				System.exit(1);
 			}
 			line = br.readLine();
 		}
 		return messageMap;
 	}
-
+	
 	/**
 	 * Method to read in the delay matrix
 	 * @param br - The buffered reader to read from
@@ -117,5 +121,45 @@ public class ProcessMain {
 		}
 		return delayMatrix;
 	}
-
+	
+	/**
+	 * Method to get the messages sent in the system in broadcast mode
+	 * @param br - The buffered reader to read from
+	 * @param noOfProcess - The number of processes in the system
+	 * @return - An HashMap of ProcessID to ArrayList of MessageInstruction containing all the messages to be sent by that instruction 
+	 * @throws IOException
+	 */
+	private static HashMap<Integer, ArrayList<MessageInstruction>> getMessagesForBroadcastMode(BufferedReader br, int noOfProcess) throws IOException {
+		HashMap<Integer, ArrayList<MessageInstruction>> messageMap = new HashMap<Integer, ArrayList<MessageInstruction>>();
+		for (int i = 0; i < noOfProcess; i++) {
+			messageMap.put(i, new ArrayList<MessageInstruction>());
+		}
+		String temp = br.readLine().split(" ")[0];
+		if (!temp.equals("Messages")) {
+			System.err.println("Wrong format of config file. Was expecting 'Messages'");
+			System.exit(1);
+		}
+		String line = br.readLine();
+		while (!line.equals("EndMessages")) {
+			String[] messageValues = line.split(" ");
+			if (messageValues.length < 3) {
+				System.err.println("Wrong format of message");
+				System.exit(1);
+			}
+			int srcProcess = Integer.parseInt(messageValues[0]);
+			String sType = messageValues[1];
+			if (!sType.equals("bc")) {
+				System.err.println("Should only be broadcast 'bc' type messages");
+				System.exit(1);
+			}
+			String[] sendTimes = messageValues[2].split(",");
+			for (int i = 0; i < sendTimes.length; i++) {
+				int sendTime = Integer.parseInt(sendTimes[i]);
+				MessageInstruction msgInst = new MessageInstruction(srcProcess, -1, sendTime);
+				messageMap.get(srcProcess).add(msgInst);
+			}
+			line = br.readLine();
+		}
+		return messageMap;
+	}
 }

@@ -1,5 +1,6 @@
 5 //The number of processes in the system
 6000 // The port number of the router
+uc // Type of casting bc - broadcast or uc - unicast
 Delays // The delays between each pair of processes as an upper right matrix
 0 0 3 3 3
 0 0 0 0 0
