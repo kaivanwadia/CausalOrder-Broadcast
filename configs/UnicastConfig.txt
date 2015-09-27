@@ -2,13 +2,15 @@
 6000 // The port number of the router
 uc // Type of casting bc - broadcast or uc - unicast
 Delays // The delays between each pair of processes as an upper right matrix
-0 0 3 3 3
+0 0 4 0 0
 0 0 0 0 0
 0 0 0 0 0
 0 0 0 0 0
 0 0 0 0 0
 Messages
-0 bc 1 // Process 0 broadcast at 1s
-1 bc 2,3 //Process 1 broadcast at 2s, 3s
+0 2 1 // It is a triple (sender, reciever, times[]). Process 0 send messages to Process 2 at 1s
+0 1 2 //Process 0 send messages to Process 1 at 2s
+1 2 3 //Process 1 send messages to Process 2 at 3s
+3 4 1,2 //Process 3 send messages to Process 4 at 1s, 2s
 EndMessages
 10 // Max running time of the system

@@ -31,6 +31,12 @@ public class ProcessMain {
 		} else {
 			messageMap = getMessagesForUnicastMode(br, noOfProcess);
 		}
+//		for (int temp = 0; temp < noOfProcess; temp++) {
+//			ArrayList<MessageInstruction> msgInsts = messageMap.get(temp);
+//			for (MessageInstruction messageInstruction : msgInsts) {
+//				System.out.println(messageInstruction.toString());
+//			}
+//		}
 		if (!br.ready()) {
 			System.err.println("Maximum running time of system not given for simulation");
 			System.exit(1);
@@ -40,10 +46,11 @@ public class ProcessMain {
 		// TODO : Remove this line
 		for (int i = 0; i < noOfProcess; i++) {
 			if (castingType == CastingType.BROADCAST) {
-				ProcessNode p = new BroadcastProcess(i, noOfProcess, routerPort, delayMatrix[i], messageMap.get(i), maxRunningTime);
+				BroadcastProcess p = new BroadcastProcess(i, noOfProcess, routerPort, delayMatrix[i], messageMap.get(i), maxRunningTime);
 				p.start();
 			} else if (castingType == CastingType.UNICAST) {
-				
+				UnicastProcess p = new UnicastProcess(i, noOfProcess, routerPort, delayMatrix[i], messageMap.get(i), maxRunningTime);
+				p.start();
 			}
 		}
 	}

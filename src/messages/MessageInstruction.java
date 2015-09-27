@@ -12,6 +12,6 @@ public class MessageInstruction {
 	
 	@Override
 	public String toString() {
-		return ""+this.srcProcess+" "+this.sendTime+" "+this.destProcess;
+		return "From: "+this.srcProcess+" to: "+this.destProcess+" at: "+this.sendTime;
 	}
 }

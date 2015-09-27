@@ -5,18 +5,23 @@ Time: 0
 Time: 1
 
 p0 BRC p_0:1
+p0 REC p_3:1
+p0 DLR p_3:1
 p0 REC p_0:1
 p0 DLR p_0:1
 ----------------
 Time: 2
 
-p0 REC p_1:1
-p0 DLR p_1:1
+p0 BRC p_0:2
+p0 REC p_0:2
+p0 DLR p_0:2
+p0 REC p_3:2
+p0 DLR p_3:2
 ----------------
 Time: 3
 
-p0 REC p_1:2
-p0 DLR p_1:2
+p0 REC p_1:1
+p0 DLR p_1:1
 ----------------
 Time: 4
 
@@ -41,4 +46,18 @@ Time: 10
 ----------------
 Time: 11
 
-Simulation Over
+----------------
+Time: 12
+
+----------------
+Time: 13
+
+----------------
+Time: 14
+
+----------------
+Time: 15
+
+----------------
+Time: 16
+
