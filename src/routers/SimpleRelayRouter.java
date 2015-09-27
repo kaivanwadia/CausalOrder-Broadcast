@@ -10,29 +10,36 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+
+import com.google.gson.Gson;
 
 import messages.Message;
+import messages.RouterRequest;
 
 public class SimpleRelayRouter implements Runnable {
+	// TODO : Change this to a HashMap?? Where the key is the processNo/ID 
 	Socket[] processSockets;
 	BufferedReader[] inStreams;
 	PrintWriter[] outStreams;
 	ServerSocket serverSocket;
 	int noOfProcesses;
 	int portNo;
-	ArrayList<String> routingRequests;
+	Gson gson;
+	ArrayList<RouterRequest> routingRequests;
 	public SimpleRelayRouter(int noOfProcess, int portNo) {
-//		this.noOfProcesses = noOfProcess;
-		this.noOfProcesses = 2;
+		this.noOfProcesses = noOfProcess;
 		this.portNo = portNo;
 		this.processSockets = new Socket[this.noOfProcesses];
 		this.inStreams = new BufferedReader[this.noOfProcesses];
 		this.outStreams = new PrintWriter[this.noOfProcesses];
-		this.routingRequests = new ArrayList<String>();
+		this.gson = new Gson();
+		this.routingRequests = new ArrayList<RouterRequest>();
 	}
 	@Override
 	public void run() {
 		this.SetupRouter();
+		System.out.println("Sent ready msgs to all processes");
 		while (true) {
 			this.ReceiveNewRoutingRequests();
 			this.ExecuteRoutingRequests();
@@ -43,7 +50,11 @@ public class SimpleRelayRouter implements Runnable {
 		try {
 			for (int i = 0; i < this.noOfProcesses; i++) {
 				if (this.inStreams[i].ready()) {
-					this.routingRequests.add(this.inStreams[i].readLine());
+					String incomingJSONString = this.inStreams[i].readLine();
+					RouterRequest request = this.gson.fromJson(incomingJSONString, RouterRequest.class);
+					request.startTime = System.currentTimeMillis();
+					System.out.println("Received Request : \n" + request.toString());
+					this.routingRequests.add(request);
 				}
 			}
 		} catch (IOException e) {
@@ -52,7 +63,22 @@ public class SimpleRelayRouter implements Runnable {
 	}
 	
 	public void ExecuteRoutingRequests() {
-		
+		int size = this.routingRequests.size();
+		boolean temp = false;
+		for (Iterator<RouterRequest> iterator = this.routingRequests.iterator(); iterator.hasNext(); ) {
+			RouterRequest request = iterator.next();
+			if (System.currentTimeMillis() - request.startTime >= (request.delayTime * 1000)) {
+				temp = true;
+				System.out.println("Executing Request : \n" + request.toString());
+				this.outStreams[request.destProcess].println(this.gson.toJson(request.message));
+				this.outStreams[request.destProcess].flush();
+				iterator.remove();
+			}
+		}
+		if (temp) {
+			System.out.println("Routing Requests Before: " + size);
+			System.out.println("Routing Requests After: " + this.routingRequests.size());
+		}
 	}
 	
 	public void SetupRouter() {

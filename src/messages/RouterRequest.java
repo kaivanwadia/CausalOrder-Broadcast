@@ -6,6 +6,7 @@ public class RouterRequest {
 	public Message message;
 	public float delayTime;
 	public int destProcess;
+	public long startTime;
 	/**
 	 * Constructor to return an object of type RouterRequest.
 	 * @param msg - the message to route
@@ -16,5 +17,12 @@ public class RouterRequest {
 		this.message = msg;
 		this.delayTime = delay;
 		this.destProcess = destPr;
+		this.startTime = 0;
+	}
+	@Override
+	public String toString() {
+		String request = "Message : " + this.message.toString();
+		request = request + "\t Delay: " + this.delayTime + "\t Dest: " + this.destProcess + "\t StartTime: " + this.startTime;
+		return request;
 	}
 }

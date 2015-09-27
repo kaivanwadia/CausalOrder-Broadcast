@@ -1,25 +1,22 @@
 package routers;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class RouterMain {
-	public static void main(String[] args) {
-		int routerType = 0;
+	public static void main(String[] args) throws IOException {
 		Thread routerThread;
-		if (args.length == 0) {
-			System.err.println("Correct arguments not provided to RouterMain");
+		if (args.length < 1) {
+			System.err.println("Incorrect number of arguments provided in ProcessMain");
 			System.exit(1);
 		}
-		if (args.length > 2) {
-			routerType = Integer.parseInt(args[2]);
-		}
-		switch (routerType) {
-		case 0:
-			SimpleRelayRouter relayRouter = new SimpleRelayRouter(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-			routerThread = new Thread(relayRouter);
-			routerThread.start();
-			break;
-		default:
-			System.out.println("Incorrect router type");
-			break;
-		}
+		BufferedReader br = new BufferedReader(new FileReader(args[0]));
+		int noOfProcesses = Integer.parseInt(br.readLine());
+		int portNo = Integer.parseInt(br.readLine());
+		SimpleRelayRouter relayRouter = new SimpleRelayRouter(noOfProcesses, portNo);
+		routerThread = new Thread(relayRouter);
+		routerThread.start();
 	}
 }

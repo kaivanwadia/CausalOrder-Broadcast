@@ -1,0 +1,12 @@
+5 //The number of processes in the system
+6000 // The port number of the router
+Delays // The delays between each pair of processes as an upper right matrix
+0 0 3 3 3
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+Messages
+0 bc 1 // Process 0 broadcast at 1s
+1 bc 2,3 //Process 1 broadcast at 2s, 3s
+EndMessages
