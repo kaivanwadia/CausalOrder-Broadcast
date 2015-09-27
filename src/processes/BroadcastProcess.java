@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import routers.RouterRequest;
 import messages.Message;
 import messages.MessageInstruction;
-import messages.RouterRequest;
 
 public class BroadcastProcess extends ProcessNode {
 	/**

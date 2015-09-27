@@ -1,4 +1,6 @@
-package messages;
+package routers;
+
+import messages.Message;
 
 
 public class RouterRequest {

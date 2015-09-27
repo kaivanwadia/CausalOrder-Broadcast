@@ -9,8 +9,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import messages.RouterRequest;
-
 import com.google.gson.Gson;
 
 public class SimpleRelayRouter implements Runnable {
