@@ -13,7 +13,7 @@ import messages.MessageInstruction;
 import messages.BroadcastType;
 
 public class ProcessMain {
-
+	// TODO : Have a maximum time value in the system for when it has to shut down
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
 			System.err.println("Incorrect number of arguments provided in ProcessMain");
@@ -26,47 +26,35 @@ public class ProcessMain {
 			System.err.println("Minimum of 1 processes required");
 			System.exit(1);
 		}
-		System.out.println(noOfProcess);
-		System.out.println(routerPort);
-		System.out.println("--------------");
-		// Read the delays into the matrix
-		System.out.println("Delays");
-		String temp = br.readLine().split(" ")[0];
-		if (!temp.equals("Delays")) {
-			System.err.println("Wrong format of config file. Was expecting 'Delays'");
+		int[][] delayMatrix = getDelayMatrix(br, noOfProcess);
+		HashMap<Integer, ArrayList<MessageInstruction>> messageMap = getMessages(br, noOfProcess);
+		if (!br.ready()) {
+			System.err.println("Maximum running time of system not given for simulation");
 			System.exit(1);
 		}
-		int[][] delayMatrix = new int[noOfProcess][noOfProcess];
+		int maxRunningTime = Integer.parseInt(br.readLine().split(" ")[0]);
+		br.close();
+		// TODO : Remove this line
+//		noOfProcess = 2;
 		for (int i = 0; i < noOfProcess; i++) {
-			String[] delayStrings = br.readLine().split(" ");
-			if (delayStrings.length != noOfProcess) {
-				System.err.println("Wrong format in delays");
-				System.exit(1);
-			}
-			int[] row = new int[noOfProcess];
-			for (int j = 0; j < noOfProcess; j++) {
-				row[j] = Integer.parseInt(delayStrings[j]);
-				if (j < i) {
-					row[j] = delayMatrix[j][i];
-				}
-			}
-			delayMatrix[i] = row;
+			ProcessNode p = new ProcessNode(i, noOfProcess, routerPort, delayMatrix[i], messageMap.get(i), maxRunningTime);
+			p.start();
 		}
-		System.out.println("Done reading delays:");
-		for (int i = 0; i < noOfProcess; i++) {
-			for (int j = 0; j < noOfProcess; j++) {
-				System.out.print(delayMatrix[i][j] + " ");
-			}
-			System.out.println();
-		}
-		System.out.println("----------------");
-		// Read the messages to be sent in the system
+	}
+
+	/**
+	 * Method to get the messages sent in the system
+	 * @param br - The buffered reader to read from
+	 * @param noOfProcess - The number of processes in the system
+	 * @return - An HashMap of ProcessID to ArrayList of MessageInstruction containing all the messages to be sent by that instruction 
+	 * @throws IOException
+	 */
+	private static HashMap<Integer, ArrayList<MessageInstruction>> getMessages(BufferedReader br, int noOfProcess) throws IOException {
 		HashMap<Integer, ArrayList<MessageInstruction>> messageMap = new HashMap<Integer, ArrayList<MessageInstruction>>();
 		for (int i = 0; i < noOfProcess; i++) {
 			messageMap.put(i, new ArrayList<MessageInstruction>());
 		}
-		System.out.println("Messages");
-		temp = br.readLine().split(" ")[0];
+		String temp = br.readLine().split(" ")[0];
 		if (!temp.equals("Messages")) {
 			System.err.println("Wrong format of config file. Was expecting 'Messages'");
 			System.exit(1);
@@ -90,25 +78,44 @@ public class ProcessMain {
 					messageMap.get(srcProcess).add(msgInst);
 				}
 			} else if (type == BroadcastType.UNICAST) {
-				
+				System.err.println("Should only have 'bc' type messages");
+				System.exit(1);
 			}
 			line = br.readLine();
 		}
-		System.out.println("Done reading messages:");
-		for (int i = 0; i < noOfProcess; i++) {
-			System.out.println("Process " + i);
-			ArrayList<MessageInstruction> msgInfos = messageMap.get(i);
-			for (MessageInstruction msgInst : msgInfos) {
-				System.out.println(msgInst.toString());
-			}
+		return messageMap;
+	}
+
+	/**
+	 * Method to read in the delay matrix
+	 * @param br - The buffered reader to read from
+	 * @param noOfProcess - The number of processes in the system
+	 * @return - The delay matrix
+	 * @throws IOException
+	 */
+	private static int[][] getDelayMatrix(BufferedReader br, int noOfProcess) throws IOException {
+		String temp = br.readLine().split(" ")[0];
+		if (!temp.equals("Delays")) {
+			System.err.println("Wrong format of config file. Was expecting 'Delays'");
+			System.exit(1);
 		}
-		System.out.println("----------------");
-		// TODO : Remove this line
-//		noOfProcess = 2;
-//		for (int i = 0; i < noOfProcess; i++) {
-//			ProcessNode p = new ProcessNode(i, routerPort, delayMatrix[i]);
-//			p.start();
-//		}
+		int[][] delayMatrix = new int[noOfProcess][noOfProcess];
+		for (int i = 0; i < noOfProcess; i++) {
+			String[] delayStrings = br.readLine().split(" ");
+			if (delayStrings.length != noOfProcess) {
+				System.err.println("Wrong format in delays");
+				System.exit(1);
+			}
+			int[] row = new int[noOfProcess];
+			for (int j = 0; j < noOfProcess; j++) {
+				row[j] = Integer.parseInt(delayStrings[j]);
+				if (j < i) {
+					row[j] = delayMatrix[j][i];
+				}
+			}
+			delayMatrix[i] = row;
+		}
+		return delayMatrix;
 	}
 
 }

@@ -1,0 +1,53 @@
+----------------
+Time: 0
+
+----------------
+Time: 1
+
+p0 BRC p_0:1
+p0 REC p_0:1
+====Message====
+No: 1	Src: 0	 to Dest: 0
+Vector Clock: [0, 0, 0, 0, 0]	 text: 1 from 0 to 0
+===============
+----------------
+Time: 2
+
+p0 REC p_1:1
+====Message====
+No: 1	Src: 1	 to Dest: 0
+Vector Clock: [0, 0, 0, 0, 0]	 text: 1 from 1 to 0
+===============
+----------------
+Time: 3
+
+p0 REC p_1:2
+====Message====
+No: 2	Src: 1	 to Dest: 0
+Vector Clock: [0, 0, 0, 0, 0]	 text: 2 from 1 to 0
+===============
+----------------
+Time: 4
+
+----------------
+Time: 5
+
+----------------
+Time: 6
+
+----------------
+Time: 7
+
+----------------
+Time: 8
+
+----------------
+Time: 9
+
+----------------
+Time: 10
+
+----------------
+Time: 11
+
+Simulation Over

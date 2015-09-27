@@ -13,8 +13,9 @@ public class RouterMain {
 			System.exit(1);
 		}
 		BufferedReader br = new BufferedReader(new FileReader(args[0]));
-		int noOfProcesses = Integer.parseInt(br.readLine());
-		int portNo = Integer.parseInt(br.readLine());
+		int noOfProcesses = Integer.parseInt(br.readLine().split(" ")[0]);
+		int portNo = Integer.parseInt(br.readLine().split(" ")[0]);
+		br.close();
 		SimpleRelayRouter relayRouter = new SimpleRelayRouter(noOfProcesses, portNo);
 		routerThread = new Thread(relayRouter);
 		routerThread.start();

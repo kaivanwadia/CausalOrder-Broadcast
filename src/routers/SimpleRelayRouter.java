@@ -27,6 +27,11 @@ public class SimpleRelayRouter implements Runnable {
 	int portNo;
 	Gson gson;
 	ArrayList<RouterRequest> routingRequests;
+	/**
+	 * Constructor to return a SimpleRelayRouter object
+	 * @param noOfProcess - The number of processes in the system
+	 * @param portNo - The portNo at which to run the Router
+	 */
 	public SimpleRelayRouter(int noOfProcess, int portNo) {
 		this.noOfProcesses = noOfProcess;
 		this.portNo = portNo;
@@ -41,29 +46,58 @@ public class SimpleRelayRouter implements Runnable {
 		this.SetupRouter();
 		System.out.println("Sent ready msgs to all processes");
 		while (true) {
-			this.ReceiveNewRoutingRequests();
+			this.ReceiveRequests();
 			this.ExecuteRoutingRequests();
+			if (this.CheckForSimulationEnd()) {
+				break;
+			}
 		}
 	}
-		
-	public void ReceiveNewRoutingRequests() {
+	/**
+	 * Receive messages from the processes. Determine the incoming request and 
+	 * handle it accordingly.
+	 */
+	public void ReceiveRequests() {
 		try {
 			for (int i = 0; i < this.noOfProcesses; i++) {
+				if (this.inStreams[i] == null) {
+					continue;
+				}
 				if (this.inStreams[i].ready()) {
-					String incomingJSONString = this.inStreams[i].readLine();
-					RouterRequest request = this.gson.fromJson(incomingJSONString, RouterRequest.class);
-					request.startTime = System.currentTimeMillis();
-					System.out.println("Received Request : \n" + request.toString());
-					this.routingRequests.add(request);
+					String incomingMsg = this.inStreams[i].readLine();
+					if (incomingMsg.startsWith("terminate")) {
+						this.outStreams[i].println("terminate-ack");
+						this.outStreams[i].flush();
+						this.inStreams[i].close();
+						this.outStreams[i].close();
+						this.inStreams[i] = null;
+						this.outStreams[i] = null;
+					} else if (incomingMsg.startsWith("routerequest")){
+						incomingMsg = incomingMsg.replace("routerequest", "");
+						this.ReceiveNewRoutingRequests(incomingMsg);
+					}
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Receive new routing requests and process them.
+	 */
+	public void ReceiveNewRoutingRequests(String incomingJSONString) {
+//		String incomingJSONString = this.inStreams[i].readLine();
+		RouterRequest request = this.gson.fromJson(incomingJSONString, RouterRequest.class);
+		request.startTime = System.currentTimeMillis();
+		System.out.println("Received Request : \n" + request.toString());
+		this.routingRequests.add(request);
+	}
+	/**
+	 * Execute any routing requests in the pending routingRequests 
+	 * ArrayList.
+	 */
 	public void ExecuteRoutingRequests() {
-		int size = this.routingRequests.size();
+//		int size = this.routingRequests.size();
 		boolean temp = false;
 		for (Iterator<RouterRequest> iterator = this.routingRequests.iterator(); iterator.hasNext(); ) {
 			RouterRequest request = iterator.next();
@@ -75,12 +109,33 @@ public class SimpleRelayRouter implements Runnable {
 				iterator.remove();
 			}
 		}
-		if (temp) {
-			System.out.println("Routing Requests Before: " + size);
-			System.out.println("Routing Requests After: " + this.routingRequests.size());
-		}
+//		if (temp) {
+//			System.out.println("Routing Requests Before: " + size);
+//			System.out.println("Routing Requests After: " + this.routingRequests.size());
+//		}
 	}
-	
+	/**
+	 * Method to check if all the processes have terminated and accordingly 
+	 * stop the router.
+	 */
+	private boolean CheckForSimulationEnd() {
+		boolean allProcessesTerminated = true;
+		for (int i = 0; i < this.noOfProcesses; i++) {
+			if (this.inStreams[i] != null || this.outStreams[i] != null) {
+				allProcessesTerminated = false;
+				break;
+			}
+		}
+		if (allProcessesTerminated) {
+			System.out.println("Terminated the Router");
+		}
+		return allProcessesTerminated;
+	}
+	/**
+	 * Setup the router. Wait for all processes to connect to the router.
+	 * Open in and out streams to all processes and then send a 
+	 * 'RouterReady' message to start the simulation.
+	 */
 	public void SetupRouter() {
 		System.out.println("Router Started");
 		try {

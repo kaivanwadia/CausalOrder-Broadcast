@@ -41,13 +41,29 @@ public class Message implements Serializable{
 	public Message(int msgNo, int srcPr, int destPr, int[] vectorClk) {
 		this(msgNo, srcPr, destPr, vectorClk, "");
 	}
-	
+	/**
+	 * Prints the message to standard out
+	 */
 	public void printMessage() {
 		System.out.println("====Message====");
-		System.out.println("No: " + this.messageNo + "\t" + "Src: " + this.srcProcess + "to Dest: " + this.destProcess);
-		System.out.println("Vector Clock: " + Arrays.toString(this.vectorClock));
+		System.out.println("No: " + this.messageNo + "\t" + "Src: " + this.srcProcess + "\t to Dest: " + this.destProcess);
+		System.out.println("Vector Clock: " + Arrays.toString(this.vectorClock) + "\t text: "+this.messageText);
 		System.out.println("===============");
 	}
+	/**
+	 * Returns the complete details of the message as a string
+	 * @return
+	 */
+	public String details() {
+		String msgDetails = "====Message====\n"+"No: " + this.messageNo + "\t" + "Src: " + this.srcProcess + "\t to Dest: " + this.destProcess+"\n";
+		msgDetails = msgDetails+"Vector Clock: " + Arrays.toString(this.vectorClock)+ "\t text: "+this.messageText+"\n===============\n";
+		return msgDetails;
+	}
+	
+	/**
+	 * Return the string for the log format i.e 
+	 * p_{process id}:{message no}
+	 */
 	@Override
 	public String toString() {
 		return "p_" + this.srcProcess + ":" + this.messageNo;

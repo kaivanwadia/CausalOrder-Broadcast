@@ -10,3 +10,4 @@ Messages
 0 bc 1 // Process 0 broadcast at 1s
 1 bc 2,3 //Process 1 broadcast at 2s, 3s
 EndMessages
+10 // Max running time of the system
