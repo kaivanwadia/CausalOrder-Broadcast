@@ -22,6 +22,7 @@ public class SimpleRelayRouter implements Runnable {
 	int noOfProcesses;
 	int portNo;
 	Gson gson;
+	int timeElapsed;
 	ArrayList<RouterRequest> routingRequests;
 	/**
 	 * Constructor to return a SimpleRelayRouter object
@@ -82,7 +83,6 @@ public class SimpleRelayRouter implements Runnable {
 	 * Receive new routing requests and process them.
 	 */
 	public void ReceiveNewRoutingRequests(String incomingJSONString) {
-//		String incomingJSONString = this.inStreams[i].readLine();
 		RouterRequest request = this.gson.fromJson(incomingJSONString, RouterRequest.class);
 		request.startTime = System.currentTimeMillis();
 		System.out.println("Received Request : \n" + request.toString());
@@ -96,7 +96,7 @@ public class SimpleRelayRouter implements Runnable {
 		for (Iterator<RouterRequest> iterator = this.routingRequests.iterator(); iterator.hasNext(); ) {
 			RouterRequest request = iterator.next();
 			if (System.currentTimeMillis() - request.startTime >= (request.delayTime * 1000)) {
-				System.out.println("Executing Request : \n" + request.toString());
+				System.out.println("Executing Request : \n" + request.toString());// + "Time : "+((int)(System.currentTimeMillis() - request.startTime)/1000));
 				this.outStreams[request.destProcess].println(this.gson.toJson(request.message));
 				this.outStreams[request.destProcess].flush();
 				iterator.remove();
