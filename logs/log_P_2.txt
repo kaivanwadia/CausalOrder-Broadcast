@@ -7,27 +7,31 @@ Time: 1
 ----------------
 Time: 2
 
-p2 REC p_1:1
+p2 REC p_4:1
 ----------------
 Time: 3
 
-p2 REC p_1:2
 ----------------
 Time: 4
 
-p2 REC p_0:1
-p2 DLR p_0:1
-p2 DLR p_1:1
-p2 DLR p_1:2
+p2 REC p_4:2
 ----------------
 Time: 5
 
+p2 REC p_3:1
 ----------------
 Time: 6
 
+p2 REC p_0:1
+p2 DLR p_0:1
+p2 DLR p_4:1
+p2 DLR p_3:1
 ----------------
 Time: 7
 
+p2 REC p_1:1
+p2 DLR p_1:1
+p2 DLR p_4:2
 ----------------
 Time: 8
 

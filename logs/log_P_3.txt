@@ -4,21 +4,26 @@ Time: 0
 ----------------
 Time: 1
 
+p3 REC p_0:1
+p3 DLR p_0:1
 ----------------
 Time: 2
 
-p3 REC p_1:1
+p3 REC p_4:1
+p3 DLR p_4:1
 ----------------
 Time: 3
 
-p3 REC p_1:2
+p3 BRC p_3:1
+p3 REC p_3:1
+p3 DLR p_3:1
 ----------------
 Time: 4
 
-p3 REC p_0:1
-p3 DLR p_0:1
+p3 REC p_4:2
+p3 REC p_1:1
 p3 DLR p_1:1
-p3 DLR p_1:2
+p3 DLR p_4:2
 ----------------
 Time: 5
 

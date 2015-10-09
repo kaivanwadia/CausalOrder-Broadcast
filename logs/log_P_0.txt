@@ -10,22 +10,26 @@ p0 DLR p_0:1
 ----------------
 Time: 2
 
-p0 REC p_1:1
-p0 DLR p_1:1
+p0 REC p_4:1
+p0 DLR p_4:1
 ----------------
 Time: 3
 
-p0 REC p_1:2
-p0 DLR p_1:2
+p0 REC p_3:1
+p0 DLR p_3:1
 ----------------
 Time: 4
 
+p0 REC p_4:2
 ----------------
 Time: 5
 
 ----------------
 Time: 6
 
+p0 REC p_1:1
+p0 DLR p_1:1
+p0 DLR p_4:2
 ----------------
 Time: 7
 
